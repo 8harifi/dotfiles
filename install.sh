@@ -100,18 +100,6 @@ INSTALL_WALLPAPER=true
 # Log script start
 log "Installation script started."
 
-display "Reset apt sources.list"
-cat << 'EOF' > /etc/apt/sources.list
-deb https://deb.debian.org/debian bookworm main non-free-firmware
-deb-src https://deb.debian.org/debian bookworm main non-free-firmware
-
-deb https://security.debian.org/debian-security bookworm-security main non-free-firmware
-deb-src https://security.debian.org/debian-security bookworm-security main non-free-firmware
-
-deb https://deb.debian.org/debian bookworm-updates main non-free-firmware
-deb-src https://deb.debian.org/debian bookworm-updates main non-free-firmware
-EOF
-
 display "Sync Time"
 sudo apt install -y ntp
 
