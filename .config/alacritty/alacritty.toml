@@ -1,0 +1,7 @@
+[window]
+opacity = 0.95
+
+[font]
+  normal = { family = "Courier New", style = "Regular" }
+  size = 11.0
+
