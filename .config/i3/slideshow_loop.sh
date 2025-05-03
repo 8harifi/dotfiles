@@ -1,7 +1,7 @@
 #!/bin/bash
 
 while true; do
-    STATUS_FILE=~/.config/i3/is_safe
+    STATUS_FILE=/tmp/is_safe
 
     if [ -f "$STATUS_FILE" ]; then
         STATUS=$(<"$STATUS_FILE")

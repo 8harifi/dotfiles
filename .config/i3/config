@@ -29,8 +29,11 @@ exec --no-startup-id dex --autostart --environment i3
 # BG
 # exec --no-startup-id ~/.config/i3/slideshow.sh
 # bindsym Mod1+0 exec --no-startup-id ~/.config/i3/slideshow.sh
-bindsym Mod1+0 exec --no-startup-id feh --bg-fill --randomize ~/wallpapers && echo "false" > ~/.config/i3/is_safe
-bindsym Mod1+Shift+0 exec --no-startup-id feh --bg-fill --randomize ~/wallpapers2 && echo "true" > ~/.config/i3/is_safe 
+
+exec --no-startup-id echo "false" > /tmp/is_safe
+
+bindsym Mod1+0 exec --no-startup-id feh --bg-fill --randomize ~/wallpapers && echo "false" > /tmp/is_safe
+bindsym Mod1+Shift+0 exec --no-startup-id feh --bg-fill --randomize ~/wallpapers2 && echo "true" > /tmp/is_safe 
 
 
 # fn brightness keys
