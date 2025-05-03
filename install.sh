@@ -7,26 +7,38 @@ USERNAME=$(whoami)
 echo "🚀 Starting Debian post-install bootstrap..."
 
 # -----------------------------------------
-# 1. Make sure sudo is installed
+# Function to run root commands via sudo or su
+# -----------------------------------------
+run_as_root() {
+  if command -v sudo >/dev/null 2>&1; then
+    sudo "$@"
+  else
+    su -c "$*"
+  fi
+}
+
+# -----------------------------------------
+# 1. Install sudo if missing
 # -----------------------------------------
 if ! command -v sudo >/dev/null 2>&1; then
+  echo "🛠️  sudo not found. Installing using su..."
   su -c "apt update && apt install -y sudo"
 fi
 
 # -----------------------------------------
-# 2. Add current user to sudo group
+# 2. Add user to sudo group if not already
 # -----------------------------------------
-if groups $USERNAME | grep -qv '\bsudo\b'; then
+if ! groups "$USERNAME" | grep -qw sudo; then
   echo "🛡️  Adding $USERNAME to sudo group..."
-  sudo usermod -aG sudo $USERNAME
-  echo "➡️  You must log out and log back in for sudo access to take effect."
+  run_as_root usermod -aG sudo "$USERNAME"
+  echo "➡️  Log out and log back in for sudo access to take effect."
 fi
 
 # -----------------------------------------
-# 3. Update system and install essentials
+# 3. Update and install essential packages
 # -----------------------------------------
 echo "📦 Installing essential packages..."
-sudo apt update && sudo apt install -y \
+run_as_root apt update && run_as_root apt install -y \
     i3 \
     rofi \
     picom \
@@ -76,8 +88,8 @@ echo "📥 Installing latest Neovim..."
 NVIM_VERSION=$(curl -s https://api.github.com/repos/neovim/neovim/releases/latest | grep tag_name | cut -d '"' -f 4)
 curl -LO https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux64.tar.gz
 tar -xzf nvim-linux64.tar.gz
-sudo mv nvim-linux64 /opt/nvim
-sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+run_as_root mv nvim-linux64 /opt/nvim
+run_as_root ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
 rm nvim-linux64.tar.gz
 echo "✅ Neovim installed: $(nvim --version | head -n1)"
 
@@ -104,12 +116,13 @@ ln -sf ~/.dotfiles/.config/rofi ~/.config/rofi
 ln -sf ~/.dotfiles/.config/picom.conf ~/.config/picom.conf
 
 # -----------------------------------------
-# 9. Locale and firewall setup (optional)
+# 9. Locales and firewall
 # -----------------------------------------
 echo "🌐 Setting locales and enabling firewall..."
-sudo locale-gen en_US.UTF-8
-sudo ufw enable
+run_as_root locale-gen en_US.UTF-8
+run_as_root ufw enable
 
-echo "🎉 All done! You may want to log out and log back in to activate group changes."
-echo "👉 Run 'startx' to launch i3 or 'nvim' to start editing."
+echo "🎉 All done!"
+echo "🔁 Log out and back in if you were just added to the sudo group."
+echo "👉 Run 'startx' to launch i3 or 'nvim' to edit your config!"
 
