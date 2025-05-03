@@ -123,12 +123,41 @@ log "End build-essential"
 display "Remove PC Speaker Beep"
 sudo rmmod pcspkr
 
-display "ZSH"
-if [ ! "$(command -v zsh)" ]; then
-  sudo nala install -y zsh fonts-font-awesome zsh-syntax-highlighting
-  ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
-  ln -s "$CUR_DIR/.zshrc" "$HOME/.zshrc"
+# display "ZSH"
+# if [ ! "$(command -v zsh)" ]; then
+#   sudo nala install -y zsh fonts-font-awesome zsh-syntax-highlighting
+#   ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
+#   ln -s "$CUR_DIR/.zshrc" "$HOME/.zshrc"
+# fi
+display "Start ZSH + Oh My Zsh"
+
+# Install Zsh and fonts
+if ! command -v zsh >/dev/null; then
+  if command -v nala >/dev/null; then
+    sudo nala install -y zsh fonts-powerline fonts-font-awesome
+  else
+    sudo apt install -y zsh fonts-powerline fonts-font-awesome
+  fi
 fi
+
+# Install Oh My Zsh (non-interactive)
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+# Make zsh the default shell
+if [ "$SHELL" != "$(which zsh)" ]; then
+  chsh -s "$(which zsh)"
+fi
+
+# Copy custom .zshrc
+ln -s "$CUR_DIR/.zshrc" "$HOME/.zshrc"
+
+# Copy alias/env scripts if you're modular
+ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
+
+display "End Oh My Zsh"
+
 
 display "Start Flatpak"
 sudo nala install -y flatpak
