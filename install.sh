@@ -154,9 +154,11 @@ if [ "$SHELL" != "$(which zsh)" ]; then
 fi
 
 # Copy custom .zshrc
-ln -s "$CUR_DIR/.zshrc" "$HOME/.zshrc"
+[ -e "$HOME/.zshrc" ] && rm -rf "$HOME/.zshrc"
+ln -sf "$CUR_DIR/.zshrc" "$HOME/.zshrc"
 
 # Copy alias/env scripts if you're modular
+[ -e "$HOME/.zsh" ] && rm -rf "$HOME/.zsh"
 ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
 
 display "End Oh My Zsh"
@@ -254,8 +256,10 @@ log "End System Utilities"
 
 display "Start Terminal Emulators"
 sudo nala install -y alacritty
+sudo update-alternati[ -e "$HOME/.config/alacritty" ] && rm -rf "$HOME/.config/alacritty"
 ln -sf "$CUR_DIR/alacritty" "$HOME/.config/alacritty"
-sudo update-alternatives --set x-terminal-emulator /usr/bin/alacritty
+
+ves --set x-terminal-emulator /usr/bin/alacritty
 log "End Terminal Emulators"
 
 display "Start Audio Control Start"
@@ -264,8 +268,9 @@ log "End Audio Control End"
 
 display "Start System Information and Monitoring"
 sudo nala install -y neofetch htop
+log "End System Infor[ -e "$HOME/.config/neofetch" ] && rm -rf "$HOME/.config/neofetch"
 ln -sf "$CUR_DIR/neofetch" "$HOME/.config/neofetch"
-log "End System Information and Monitoring"
+mation and Monitoring"
 
 display "Start Screenshots"
 sudo nala install -y flameshot
@@ -350,6 +355,7 @@ display "LOCK SCREEN End"
 
 display "WINDOW MANAGER Start"
 sudo nala install -y i3 i3lock-fancy xautolock
+[ -e "$HOME/.config/i3" ] && rm -rf "$HOME/.config/i3"
 ln -sf "$CUR_DIR/i3" "$HOME/.config/i3"
 display "WINDOW MANAGER End"
 
@@ -465,6 +471,7 @@ if [ "$INSTALL_NVIM" = true ]; then
     sudo apt install -y xclip  # For clipboard support
 
     # Clone user config
+    [ -e "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
     ln -sf "$CUR_DIR/nvim" "$HOME/.config/nvim"
     sudo mkdir -p /root/.config
     sudo cp -r "$HOME/.config/nvim" /root/.config/nvim
