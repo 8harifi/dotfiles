@@ -3,6 +3,25 @@
 # Enable exit on error
 set -e
 
+
+run_step() {
+  local name="$1"
+  shift
+
+  # If START_FROM is defined, skip steps until we reach it
+  if [[ -n "$START_FROM" && "$START_FROM" != "$name" && "$SKIP" != false ]]; then
+    echo "⏩ Skipping $name"
+    return
+  fi
+
+  SKIP=false
+  CURRENT_STEP="$name"
+
+  echo -e "\n🟢 Starting: $name"
+  "$@"
+}
+
+
 # Function to log messages
 log() {
   local message="$1"
@@ -43,8 +62,8 @@ add_to_file_if_not_in_it() {
   fi
 }
 
-# Function for displaying headers
-display() {
+# Function for run_steping headers
+run_step() {
   local header_text="$1"
   local DISPLAY_COMMAND="echo"
 
@@ -100,39 +119,39 @@ INSTALL_WALLPAPER=true
 # Log script start
 log "Installation script started."
 
-display "Sync Time"
+run_step "Sync Time"
 sudo apt install -y ntp
 
-display "UPDATE"
+run_step "UPDATE"
 sudo apt update
 sudo apt -y upgrade
 
-display "Installing nala"
+run_step "Installing nala"
 sudo apt install -y nala figlet curl
 
-display "Refresh Mirrors"
+run_step "Refresh Mirrors"
 yes | sudo nala fetch --auto
 
 #add mirror refresh
-display "Crontab setup"
+run_step "Crontab setup"
 cron_cmd='@reboot yes | nala fetch --auto'
 (sudo crontab -l 2>/dev/null; echo "$cron_cmd") | sort -u | sudo crontab -
 
-display "Start build-essential"
+run_step "Start build-essential"
 sudo nala install -y build-essential xdg-user-dirs vim
 log "End build-essential"
 
 # Remove PC Speaker Beep
-display "Remove PC Speaker Beep"
+run_step "Remove PC Speaker Beep"
 sudo rmmod pcspkr
 
-# display "ZSH"
+# run_step "ZSH"
 # if [ ! "$(command -v zsh)" ]; then
 #   sudo nala install -y zsh fonts-font-awesome zsh-syntax-highlighting
 #   ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
 #   ln -s "$CUR_DIR/.zshrc" "$HOME/.zshrc"
 # fi
-display "Start ZSH + Oh My Zsh"
+run_step "Start ZSH + Oh My Zsh"
 
 # Install Zsh and fonts
 if ! command -v zsh >/dev/null; then
@@ -161,15 +180,15 @@ ln -sf "$CUR_DIR/.zshrc" "$HOME/.zshrc"
 [ -e "$HOME/.zsh" ] && rm -rf "$HOME/.zsh"
 ln -sf "$CUR_DIR/.zsh" "$HOME/.zsh"
 
-display "End Oh My Zsh"
+run_step "End Oh My Zsh"
 
 
-display "Start Flatpak"
+run_step "Start Flatpak"
 sudo nala install -y flatpak
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 log "End Flatpak"
 
-display "Start Nodejs"
+run_step "Start Nodejs"
 if [ ! "$(command -v npm)" ]; then
   sudo nala update
   sudo nala install -y ca-certificates curl gnupg
@@ -182,41 +201,41 @@ if [ ! "$(command -v npm)" ]; then
 fi
 log "End Nodejs"
 
-display "Start Python-add"
+run_step "Start Python-add"
 sudo nala install -y python3-pip python3-venv
 log "End Python-add"
 
 if [ $INSTALL_JAVA == true ]; then
-  display "Java Start"
+  run_step "Java Start"
   sudo nala install -y default-jdk
   log "Java End"
 fi
 
 if [ $INSTALL_GO == true ]; then
-  display "Go Start"
+  run_step "Go Start"
   sudo nala install -y golang
   log "Go End"
 fi
 
 if [ $INSTALL_LUA == true ]; then
-  display "Lua Start"
+  run_step "Lua Start"
   sudo nala install -y lua5.4 luarocks
   log "Lua End"
 fi
 
 if [ $INSTALL_C == true ]; then
-  display "C Start"
+  run_step "C Start"
   sudo nala install -y libcriterion-dev cppcheck gdb valgrind lldb gcovr ncurses-devel CSFML-devel
   #"$SCRIPT_DIR/criterion/install_criterion.sh"
   log "C End"
 fi
 
-display "Start Framwork & Header Updates"
+run_step "Start Framwork & Header Updates"
 sudo nala install -y linux-headers-"$(uname -r)" firmware-linux software-properties-common laptop-mode-tools
 log "End Framwork & Header Updates"
 
 if [ $INSTALL_DOCKER == true ]; then
-  display "Docker Engine Start"
+  run_step "Docker Engine Start"
   if [ ! "$(command -v docker)" ]; then
     sudo nala update
     sudo nala install ca-certificates curl gnupg
@@ -238,23 +257,23 @@ if [ $INSTALL_DOCKER == true ]; then
   log "Docker Engine End"
 fi
 
-display "Start Virtualisation"
+run_step "Start Virtualisation"
 sudo nala install -y distrobox virt-manager
 log "End Virtualisation"
 
-display "Start Network Management"
+run_step "Start Network Management"
 sudo nala install -y nm-tray network-manager
 sudo systemctl start NetworkManager.service
 sudo systemctl enable NetworkManager.service
 log "End Network Management"
 
-display "Start System Utilities"
+run_step "Start System Utilities"
 sudo nala install -y dialog mtools dosfstools avahi-daemon acpi acpid gvfs-backends
 sudo systemctl enable avahi-daemon
 sudo systemctl enable acpid
 log "End System Utilities"
 
-display "Start Terminal Emulators"
+run_step "Start Terminal Emulators"
 sudo nala install -y alacritty
 sudo update-alternati[ -e "$HOME/.config/alacritty" ] && rm -rf "$HOME/.config/alacritty"
 ln -sf "$CUR_DIR/alacritty" "$HOME/.config/alacritty"
@@ -262,67 +281,67 @@ ln -sf "$CUR_DIR/alacritty" "$HOME/.config/alacritty"
 ves --set x-terminal-emulator /usr/bin/alacritty
 log "End Terminal Emulators"
 
-display "Start Audio Control Start"
+run_step "Start Audio Control Start"
 sudo nala install -y pulseaudio alsa-utils pavucontrol volumeicon-alsa
 log "End Audio Control End"
 
-display "Start System Information and Monitoring"
+run_step "Start System Information and Monitoring"
 sudo nala install -y neofetch htop
 log "End System Infor[ -e "$HOME/.config/neofetch" ] && rm -rf "$HOME/.config/neofetch"
 ln -sf "$CUR_DIR/neofetch" "$HOME/.config/neofetch"
 mation and Monitoring"
 
-display "Start Screenshots"
+run_step "Start Screenshots"
 sudo nala install -y flameshot
 log "End Screenshots"
 
-display "Start Printer Support"
+run_step "Start Printer Support"
 sudo nala install -y cups simple-scan
 sudo systemctl enable cups
 log "End Printer Support"
 
-display "Start Bluetooth Support"
+run_step "Start Bluetooth Support"
 sudo nala install -y bluez blueman
 sudo systemctl enable bluetooth
 log "End Bluetooth Support"
 
-display "Start Menu and Window Managers"
+run_step "Start Menu and Window Managers"
 sudo nala install -y numlockx rofi dunst libnotify-bin picom dmenu dbus-x11
-display "Start Menu and Window Managers"
+run_step "Start Menu and Window Managers"
 
-display "Start Text Editors"
+run_step "Start Text Editors"
 sudo nala install -y vim
 cp "$SCRIPT_DIR/vim/.vimrc" "$HOME"
 log "End Text Editors"
 
-display "Start Image Viewer"
+run_step "Start Image Viewer"
 sudo nala install -y viewnior sxiv ueberzug python3-pillow
 log "End Image Viewer"
 
-display "Start Wallpaper"
+run_step "Start Wallpaper"
 sudo nala install -y feh
 log "End Wallpaper"
 
-display "Start Media Player"
+run_step "Start Media Player"
 sudo nala install -y vlc mpv
 log "End Media Player"
 
-display "Start Music Player"
+run_step "Start Music Player"
 sudo flatpak install -y flathub com.spotify.Client io.bassi.Amberol
 # spotify_player
 sudo nala install -y libssl-dev libasound2-dev libdbus-1-dev
 cargo install spotify_player --features sixel,daemon
 log "End Music Player"
 
-display "Start Document Viewer"
+run_step "Start Document Viewer"
 sudo nala install -y zathura
 log "End Document Viewer"
 
-display "Start X Window System and Input"
+run_step "Start X Window System and Input"
 sudo apt -f install -y xorg xbacklight xinput xorg-dev xdotool brightnessctl
 log "End X Window System and Input"
 
-display "LOCK SCREEN Start"
+run_step "LOCK SCREEN Start"
 sudo nala install -y libpam0g-dev libxcb-xkb-dev
 if [ ! -d "/tmp/ly" ]; then
   git clone --recurse-submodules https://github.com/fairyglade/ly /tmp/ly
@@ -351,15 +370,15 @@ EOF
   sudo cp ./temp /usr/share/xsessions/i3.desktop
   rm ./temp
 fi
-display "LOCK SCREEN End"
+run_step "LOCK SCREEN End"
 
-display "WINDOW MANAGER Start"
+run_step "WINDOW MANAGER Start"
 sudo nala install -y i3 i3lock-fancy xautolock
 [ -e "$HOME/.config/i3" ] && rm -rf "$HOME/.config/i3"
 ln -sf "$CUR_DIR/i3" "$HOME/.config/i3"
-display "WINDOW MANAGER End"
+run_step "WINDOW MANAGER End"
 
-display "Theme Start"
+run_step "Theme Start"
 # # Desktop Theme
 # sudo nala install -y arc-theme
 # # Icons
@@ -384,9 +403,9 @@ display "Theme Start"
 # # Add config
 # mkdir -p "$HOME/.config/gtk-3.0/"
 # cp "$SCRIPT_DIR/gtk-3.0/.gtkrc-2.0" "$HOME/"
-display "Theme End"
+run_step "Theme End"
 
-display "Wallpaper Start"
+run_step "Wallpaper Start"
 if [ ! -d "$HOME/wallpapers"]; then
     cp -r "$CUR_DIR/wallpapers" "$HOME/wallpapers"
 fi
@@ -394,9 +413,9 @@ fi
 if [ ! -d "$HOME/wallpapers2"]; then
     cp -r "$CUR_DIR/wallpapers2" "$HOME/wallpapers2"
 fi
-display "Wallpaper End"
+run_step "Wallpaper End"
 
-display "Start Kubectl"
+run_step "Start Kubectl"
 if [ ! "$(command -v kubectl)" ]; then
   sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   sudo chmod +x kubectl
@@ -409,7 +428,7 @@ if [ ! "$(command -v kubectl)" ]; then
 fi
 log "End Kubectl"
 
-# display "Start Minikube"
+# run_step "Start Minikube"
 # if [ ! "$(command -v minikube)" ]; then
 #   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 #   sudo install minikube-linux-amd64 /usr/local/bin/minikube
@@ -417,7 +436,7 @@ log "End Kubectl"
 # log "End Minikube"
 
 if [ $INSTALL_VSCODE == true ]; then
-  display "Start VSCode"
+  run_step "Start VSCode"
   if [ ! "$(command -v code)" ]; then
     sudo nala install -y wget gpg apt-transport-https
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -431,7 +450,7 @@ if [ $INSTALL_VSCODE == true ]; then
 fi
 
 if [ "$INSTALL_NVIM" = true ]; then
-  display "Start Neovim"
+  run_step "Start Neovim"
 
   if ! command -v nvim >/dev/null; then
     echo "📦 Installing Neovim from source..."
@@ -456,7 +475,7 @@ if [ "$INSTALL_NVIM" = true ]; then
   fi
 
   log "End Neovim"
-  display "Start Config NeoVim"
+  run_step "Start Config NeoVim"
 
   # Only configure if config is missing
   if [ ! -d "$HOME/.config/nvim" ]; then
@@ -492,7 +511,7 @@ if [ "$INSTALL_NVIM" = true ]; then
   log "End Config NeoVim"
 fi
 
-display "CRONTAB"
+run_step "CRONTAB"
 sudo crontab "$CRONTAB_ROOT"
 
 sudo chown -R "$USER":"$USER" "/home/$USER"
@@ -501,12 +520,12 @@ END=$(date +%s)
 
 RUNTIME=$((END - START))
 
-display "Type Your Password to make zsh your Default shell"
+run_step "Type Your Password to make zsh your Default shell"
 chsh -s /bin/zsh
 
-display "Scrip executed in $RUNTIME s"
+run_step "Scrip executed in $RUNTIME s"
 
-display "Reboot Now"
+run_step "Reboot Now"
 
 # Log script completion
 log "Installation script completed."
