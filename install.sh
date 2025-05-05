@@ -507,7 +507,7 @@ Setup_neovim_config() {
     [ -e "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
 
     # Link user's Neovim config from script dir
-    ln -sf "$CUR_DIR/nvim" "$HOME/.config/nvim"
+    ln -sf "$CUR_DIR/.config/nvim" "$HOME/.config/nvim"
 
     # Setup lazy.nvim plugin manager
     mkdir -p "$HOME/.config/nvim/lazy"
