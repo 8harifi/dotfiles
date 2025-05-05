@@ -1,16 +1,8 @@
 # get random tips for vim and i3
 # ~/.scripts/random_tip.sh | fold -s -w $(( $(tput cols) - 10 )) | boxes | lolcat
 
-autoload -Uz colors && colors
-
-# Environment
-source ~/.zsh/env.zsh
-
-# Aliases
-source ~/.zsh/alias.zsh
-
-# Prompt/theme
-source ~/.zsh/fletcherm.zsh-theme
+source ~/.oh-my-zsh/oh-my-zsh.sh
+source ~/.oh-my-zsh/themes/fletcherm.zsh-theme
 
 # If you come from bash you might have to change your $PATH.
 export PATH=/usr/games:$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
