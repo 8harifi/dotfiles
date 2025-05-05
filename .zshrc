@@ -1,14 +1,12 @@
 # get random tips for vim and i3
 # ~/.scripts/random_tip.sh | fold -s -w $(( $(tput cols) - 10 )) | boxes | lolcat
 
-source ~/.oh-my-zsh/oh-my-zsh.sh
-source ~/.oh-my-zsh/themes/fletcherm.zsh-theme
-
 # If you come from bash you might have to change your $PATH.
 export PATH=/usr/games:$HOME/bin:/usr/local/bin:$HOME/.local/bin:$PATH
 export PATH=$HOME/go/bin:$PATH
 
 # Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
 HISTSIZE=10000
 SAVEHIST=10000
 
@@ -16,6 +14,7 @@ SAVEHIST=10000
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="fletcherm"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -78,6 +77,8 @@ SAVEHIST=10000
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
