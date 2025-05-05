@@ -310,6 +310,7 @@ run_step "Setup bluetooth support" Setup_bluetooth_support
 Setup_menu_and_wm() {
     display "Setup menu and window managers"
     sudo nala install -y numlockx rofi dunst libnotify-bin picom dmenu dbus-x11
+    ln -s "$CUR_DIR/.config/picom.conf" "$HOME/.config/picom.conf"
 }
 run_step "Setup menu and window managers" Setup_menu_and_wm
 
