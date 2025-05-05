@@ -514,10 +514,17 @@ Setup_neovim_config() {
         sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 50
     fi
 
+    # Ensure lazy.nvim parent directory exists
     mkdir -p "$HOME/.config/nvim/lazy"
-    git clone https://github.com/folke/lazy.nvim.git "$HOME/.config/nvim/lazy/lazy.nvim"
+
+    # Clone lazy.nvim only if not already present
+    if [ ! -d "$HOME/.config/nvim/lazy/lazy.nvim/.git" ]; then
+      git clone https://github.com/folke/lazy.nvim.git "$HOME/.config/nvim/lazy/lazy.nvim"
+    fi
+
+    # Link lazy.nvim to root config (if not already linked)
     sudo mkdir -p /root/.config/nvim/lazy
-    sudo cp -r "$HOME/.config/nvim/lazy/lazy.nvim" /root/.config/nvim/lazy/lazy.nvim
+    sudo ln -sf "$HOME/.config/nvim/lazy/lazy.nvim" /root/.config/nvim/lazy/lazy.nvim
 }
 if [ "$INSTALL_NVIM" = true ]; then
     run_step "Setup neovim config" Setup_neovim_config
