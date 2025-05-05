@@ -268,7 +268,7 @@ Setup_terminal_emulators() {
     display "Setup terminal emulators"
     sudo nala install -y alacritty
     [ -e "$HOME/.config/alacritty" ] && rm -rf "$HOME/.config/alacritty"
-    ln -sf "$CUR_DIR/alacritty" "$HOME/.config/alacritty"
+    ln -sf "$CUR_DIR/.config/alacritty" "$HOME/.config/alacritty"
     sudo update-alternatives --set x-terminal-emulator /usr/bin/alacritty
 }
 run_step "Setup terminal emulators" Setup_terminal_emulators
@@ -283,7 +283,7 @@ Setup_system_monitoring() {
     display "Setup system monitoring"
     sudo nala install -y neofetch htop
     [ -e "$HOME/.config/neofetch" ] && rm -rf "$HOME/.config/neofetch"
-    ln -sf "$CUR_DIR/neofetch" "$HOME/.config/neofetch"
+    ln -sf "$CUR_DIR/.config/neofetch" "$HOME/.config/neofetch"
 }
 run_step "Setup system monitoring" Setup_system_monitoring
 
@@ -392,7 +392,7 @@ Setup_window_manager() {
     display "Setup window manager"
     sudo nala install -y i3 i3lock-fancy xautolock
     [ -e "$HOME/.config/i3" ] && rm -rf "$HOME/.config/i3"
-    ln -sf "$CUR_DIR/i3" "$HOME/.config/i3"
+    ln -sf "$CUR_DIR/.config/i3" "$HOME/.config/i3"
 }
 run_step "Setup window manager" Setup_window_manager
 
