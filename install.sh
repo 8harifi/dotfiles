@@ -509,9 +509,8 @@ Setup_neovim_config() {
         fi
         sudo apt install -y xclip
         [ -e "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
-        ln -sf "$CUR_DIR/nvim" "$HOME/.config/nvim"
+        ln -sf "$CUR_DIR/.config/nvim" "$HOME/.config/nvim"
         sudo mkdir -p /root/.config
-        sudo cp -r "$HOME/.config/nvim" /root/.config/nvim
         sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 50
     fi
 
