@@ -6,7 +6,7 @@ vim.g.mapleader = " "
 vim.cmd("set number")
 
 -- Set up LazyVim in Neovim
-vim.opt.runtimepath:append("~/.local/share/nvim/site/pack/packer/start/lazy.nvim")
+vim.opt.runtimepath:append("~/.config/nvim/lazy/lazy.nvim")
 
 local plugins = {
     "lepture/vim-jinja",
