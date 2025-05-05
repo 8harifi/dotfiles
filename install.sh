@@ -502,30 +502,37 @@ fi
 
 Setup_neovim_config() {
     display "Setup neovim config"
-    if [ ! -d "$HOME/.config/nvim" ]; then
-        pip install neovim --break-system-packages
-        if ! command -v tree-sitter >/dev/null; then
-            sudo npm install -g neovim tree-sitter-cli
-        fi
-        sudo apt install -y xclip
-        [ -e "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
-        ln -sf "$CUR_DIR/.config/nvim" "$HOME/.config/nvim"
-        sudo mkdir -p /root/.config
-        sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 50
-    fi
 
-    # Ensure lazy.nvim parent directory exists
+    # Remove old config if it exists
+    [ -e "$HOME/.config/nvim" ] && rm -rf "$HOME/.config/nvim"
+
+    # Link user's Neovim config from script dir
+    ln -sf "$CUR_DIR/nvim" "$HOME/.config/nvim"
+
+    # Setup lazy.nvim plugin manager
     mkdir -p "$HOME/.config/nvim/lazy"
 
-    # Clone lazy.nvim only if not already present
     if [ ! -d "$HOME/.config/nvim/lazy/lazy.nvim/.git" ]; then
-      git clone https://github.com/folke/lazy.nvim.git "$HOME/.config/nvim/lazy/lazy.nvim"
+        git clone https://github.com/folke/lazy.nvim.git "$HOME/.config/nvim/lazy/lazy.nvim"
     fi
 
-    # Link lazy.nvim to root config (if not already linked)
+    # Link lazy.nvim for root as well
     sudo mkdir -p /root/.config/nvim/lazy
     sudo ln -sf "$HOME/.config/nvim/lazy/lazy.nvim" /root/.config/nvim/lazy/lazy.nvim
+
+    # Install neovim support tools
+    pip install neovim --break-system-packages
+
+    if ! command -v tree-sitter >/dev/null; then
+        sudo npm install -g neovim tree-sitter-cli
+    fi
+
+    sudo apt install -y xclip
+
+    # Make Neovim the default editor
+    sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 50
 }
+
 if [ "$INSTALL_NVIM" = true ]; then
     run_step "Setup neovim config" Setup_neovim_config
 fi
