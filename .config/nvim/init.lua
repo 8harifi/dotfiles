@@ -9,6 +9,26 @@ vim.cmd("set number")
 vim.opt.runtimepath:append("~/.config/nvim/lazy/lazy.nvim")
 
 local plugins = {
+    {
+      "williamboman/mason.nvim",
+      config = true,
+    },
+    {
+      "williamboman/mason-lspconfig.nvim",
+      dependencies = { "williamboman/mason.nvim" },
+    },
+    {
+      "neovim/nvim-lspconfig",
+    },
+    {
+      "epwalsh/obsidian.nvim",
+      version = "*",
+      lazy = true,
+      ft = "markdown",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
+    },
     "lepture/vim-jinja",
 
     -- Autotag for HTML, JSX, etc.
