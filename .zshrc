@@ -10,6 +10,10 @@ export ZSH="$HOME/.oh-my-zsh"
 HISTSIZE=10000
 SAVEHIST=10000
 
+
+# autojump setup
+[[ -s /home/mmd/.autojump/etc/profile.d/autojump.sh ]] && source /home/mmd/.autojump/etc/profile.d/autojump.sh
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -105,4 +109,4 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
